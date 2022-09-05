@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
+const userRoutes = require("./routes/user");
 
 mongoose
   .connect(
@@ -12,23 +13,6 @@ mongoose
 
 console.log("TEST3");
 
-app.use((req, res, next) => {
-  console.log("Requête reçue !");
-  next();
-});
-
-app.use((req, res, next) => {
-  res.status(201);
-  next();
-});
-
-app.use((req, res, next) => {
-  res.json({ message: "Votre requête a bien été reçue !" });
-  next();
-});
-
-app.use((req, res, next) => {
-  console.log("Réponse envoyée avec succès !");
-});
+app.use("/api/auth", userRoutes);
 
 module.exports = app;
