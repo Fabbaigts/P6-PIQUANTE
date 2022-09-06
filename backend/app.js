@@ -3,6 +3,8 @@ const app = express();
 const mongoose = require("mongoose");
 const userRoutes = require("./routes/user");
 app.use(express.json());
+
+//Ajout de la passerelle de connexion mangoose pour le controle de la BD Mongo.
 mongoose
   .connect(
     "mongodb+srv://fabiencdp:Fab40@piquante.kgej83c.mongodb.net/test",
@@ -25,7 +27,7 @@ app.use((req, res, next) => {
   next();
 });
 
-console.log("TEST3");
+console.log("TEST de lecture de App.js");
 
 app.use("/api/auth", userRoutes);
 
