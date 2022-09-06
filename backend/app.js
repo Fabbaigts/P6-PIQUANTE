@@ -2,10 +2,10 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const userRoutes = require("./routes/user");
-
+app.use(express.json());
 mongoose
   .connect(
-    "mongodb+srv://fabien:P6-piquante@piquante.lumujnc.mongodb.net/test",
+    "mongodb+srv://fabiencdp:Fab40@piquante.kgej83c.mongodb.net/test",
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => console.log("Connexion à MongoDB réussie !"))
