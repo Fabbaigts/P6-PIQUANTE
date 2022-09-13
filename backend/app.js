@@ -6,8 +6,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 // import des fonctionnalités de path
 const path = require("path");
-//import du modèle de sauce
-const Sauce = require("./models/sauces");
+
 //import des routes auth et sauces
 const userRoutes = require("./routes/user");
 const sauceRoutes = require("./routes/sauces");
@@ -27,11 +26,13 @@ app.use(cors());
 //fonction express  permettant le parsage du body
 app.use(express.json());
 
-// fonction d'express permettant l'acces au repertoire image statique
+// fonction d'express permettant l'acces au repertoire d'e statiques
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 //fonction d'express pour la gestion des routes
 app.use("/api/auth", userRoutes);
 app.use("/api/sauces", sauceRoutes);
+
+
 
 module.exports = app;

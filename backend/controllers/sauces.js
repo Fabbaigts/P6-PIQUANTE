@@ -29,15 +29,19 @@ exports.createSauce = (req, res, next) => {
     });
 };
 
-exports.getAllSauce = (req, res, next) => { sauce
+exports.getAllSauce = (req, res, next) => {
+  sauce
     .find()
-    .then(sauces => res.status(200).json(sauces))
-    .catch(error => res.status(400).json({ error }));
-    };
+    .then((lesSauces) => res.status(200).json(lesSauces))
+    .catch((error) => res.status(400).json({ error }));
+  next;
+};
 
 exports.getOneSauce = (req, res, next) => {
-      sauce
-        .findOne({ _id: req.params.id })
-        .then(sauces => res.status(200).json(sauces))
-        .catch(error => res.status(400).json({ error }));
-    };
+  console.log(req.params.id);
+  sauce
+    .findOne({ _id: req.params.id })
+    .then((sauce) => res.status(200).json(sauce))
+    .catch((error) => res.status(404).json({ error }));
+  next;
+};
