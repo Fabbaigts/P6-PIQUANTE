@@ -34,7 +34,7 @@ exports.getAllSauce = (req, res, next) => {
     .find()
     .then((lesSauces) => res.status(200).json(lesSauces))
     .catch((error) => res.status(400).json({ error }));
-  next;
+  console.log("Affichage des sauces réussi:");
 };
 
 exports.getOneSauce = (req, res, next) => {
@@ -43,5 +43,22 @@ exports.getOneSauce = (req, res, next) => {
     .findOne({ _id: req.params.id })
     .then((sauce) => res.status(200).json(sauce))
     .catch((error) => res.status(404).json({ error }));
-  next;
+  console.log("Sauce trouvée !");
+};
+exports.modifySauce = (req, res, next) => {
+  console.log(req.params.id);
+  sauce
+    .updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
+    .then((sauce) => res.status(200).json(sauce))
+    .catch((error) => res.status(404).json({ error }));
+  console.log("Objet modifié !");
+};
+
+exports.deleteSauce = (req, res, next) => {
+  console.log(req.params.id);
+  sauce
+    .deleteOne({ _id: req.params.id })
+    .then((sauce) => res.status(200).json({ message: "Objet supprimé !" }))
+    .catch((error) => res.status(404).json({ error }));
+  console.log("Objet supprimé !");
 };
