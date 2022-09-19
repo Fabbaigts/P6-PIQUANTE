@@ -53,4 +53,4 @@ exports.login = (req, res, next) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
-//// verifier le "compare" des mots de passe cryptés
+

@@ -26,7 +26,7 @@ app.use(cors());
 //fonction express  permettant le parsage du body
 app.use(express.json());
 
-// fonction d'express permettant l'acces au repertoire d'e statiques
+// fonction d'express permettant l'acces au repertoire d'images statiques
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 //fonction d'express pour la gestion des routes
