@@ -3,7 +3,7 @@ const fs = require("fs"); // pour l'accès au système de fichiers
 const { inflateRawSync } = require("zlib");
 
 // *****************************************************************************************
-// **********************  middleware pour la création d'une sauce *************************
+// **********************  middleware (logique métier) pour la création d'une sauce *************************
 // *****************************************************************************************
 
 exports.createSauce = (req, res, next) => {
