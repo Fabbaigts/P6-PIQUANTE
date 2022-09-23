@@ -1,5 +1,6 @@
 const sauce = require("../models/sauces");
 const fs = require("fs"); // pour l'accès au système de fichiers
+const { inflateRawSync } = require("zlib");
 
 // *****************************************************************************************
 // **********************  middleware pour la création d'une sauce *************************
@@ -53,7 +54,7 @@ exports.getOneSauce = (req, res, next) => {
     .then((sauce) => res.status(200).json(sauce))
     .catch((error) => res.status(404).json({ error }));
   console.log("Sauce trouvée !");
-  console.log(req.rawHeaders[9]);
+  console.log(req.rawHeaders[09]);
 };
 
 // *****************************************************************************************
@@ -61,8 +62,7 @@ exports.getOneSauce = (req, res, next) => {
 // *****************************************************************************************
 
 exports.modifySauce = (req, res, next) => {
-  const objetSauce = req.file
-    ? {
+; const objetSauce = req.file? {
         ...JSON.parse(req.body.sauce),
         imageUrl: `${req.protocol}://${req.get("host")}/images/${
           req.file.filename
@@ -70,8 +70,8 @@ exports.modifySauce = (req, res, next) => {
       }
     : { ...req.body };
   console.log(objetSauce);
+delete objetSauce._userId;
 
-  delete objetSauce._userId;
   sauce
     .findOne({ _id: req.params.id })
     .then((theSauce) => {
@@ -82,8 +82,22 @@ exports.modifySauce = (req, res, next) => {
           .status(401)
           .json({ message: "NON AUTORISE! Sur route PUT modifySauce" });
       } else {
+        if (!req.file)//l'inverse(!) si il n'ya a pas d'image dans lfichier requête.
+        {
+          sauce
+            .updateOne(
+              { _id: req.params.id },
+              { ...objetSauce, _id: req.params.id }
+            )
+            .then(() => res.status(200).json({ message: "Objet modifié!" }))
+            .catch((error) => res.status(401).json({ error }));
+
+
+      } else{
         const filename = theSauce.imageUrl.split("/images/")[1];
         console.log(filename);
+
+
         fs.unlink(`images/${filename}`, () => {
           sauce
             .updateOne(
@@ -93,7 +107,7 @@ exports.modifySauce = (req, res, next) => {
             .then(() => res.status(200).json({ message: "Objet modifié!" }))
             .catch((error) => res.status(401).json({ error }));
         });
-      }
+      }}
     })
     .catch((error) => {
       res.status(400).json({ error });
@@ -178,7 +192,7 @@ exports.like = (req, res, next) => {
                 $pull: { usersLiked: req.body.userId }, //Retrait du UserLiked ($pull)de MONGODB
               },
               console.log(
-                "Nous sommes rentrés dans la fonction de suppression pull"
+                "Nous sommes bien passés par la fonction de suppression '$pull' du Like"
               )
             )
             .then(() => {
@@ -196,7 +210,7 @@ exports.like = (req, res, next) => {
                 $pull: { usersDisliked: req.body.userId }, //Retrait du UserDisliked ($pull) de MONGODB
               },
               console.log(
-                "Nous sommes rentrés dans la fonction de suppression pull"
+                "Nous sommes bien passés par la fonction de suppression '$pull' du dislike"
               )
             )
             .then((sauce) => {
