@@ -1,15 +1,25 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto-js");
+require("dotenv").config();
+
+// chiffrage email
 
 exports.signup = (req, res, next) => {
   console.log(req.body.password);
+
+  const cryptoEmail = crypto
+    .HmacSHA256(req.body.email, "process.env.EMAIL_ENV")
+    .toString();
+  console.log(cryptoEmail);
   bcrypt
     .hash(req.body.password, 10)
     .then((hash) => {
       console.log(hash);
+      console.log(cryptoEmail);
       const user = new User({
-        email: req.body.email,
+        email: cryptoEmail,
         password: hash,
       });
       user
@@ -21,7 +31,12 @@ exports.signup = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-  User.findOne({ email: req.body.email })
+  const cryptoEmail = crypto
+    .HmacSHA256(req.body.email, "process.env.EMAIL_ENV")
+    .toString();
+  console.log(cryptoEmail);
+
+  User.findOne({ email: cryptoEmail })
     .then((user) => {
       if (!user) {
         return res
@@ -39,8 +54,8 @@ exports.login = (req, res, next) => {
 
           res.status(200).json({
             userId: user._id,
-            token: jwt.sign({ userId: user._id }, "RANDOM_TOKEN_SECRET", {
-              expiresIn: "72h",
+            token: jwt.sign({ userId: user._id }, process.env.TOKEN_ENV, {
+              expiresIn: "24h",
             }),
           });
         })

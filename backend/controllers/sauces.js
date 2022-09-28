@@ -1,6 +1,5 @@
 const sauce = require("../models/sauces");
 const fs = require("fs"); // pour l'accès au système de fichiers
-const { inflateRawSync } = require("zlib");
 
 // *****************************************************************************************
 // **********************  middleware (logique métier) pour la création d'une sauce *************************
@@ -62,52 +61,54 @@ exports.getOneSauce = (req, res, next) => {
 // *****************************************************************************************
 
 exports.modifySauce = (req, res, next) => {
-; const objetSauce = req.file? {
+  //------- est ce qu'un fichier (file) se trouve dans la requête? -------
+  const thingObject = req.file
+    ? //si oui alors on parse l'objet pour recuperer l'url de l'image
+      {
         ...JSON.parse(req.body.sauce),
         imageUrl: `${req.protocol}://${req.get("host")}/images/${
           req.file.filename
         }`,
       }
-    : { ...req.body };
-  console.log(objetSauce);
-delete objetSauce._userId;
+    : //Si non on récupère simplement le corps de la requête et on retire l'userId par S
+      { ...req.body };
+  delete thingObject._userId;
+
+  // thingObject prend alors une valeur ou l'autre selon que la requête contienne ou pas un file.
 
   sauce
     .findOne({ _id: req.params.id })
-    .then((theSauce) => {
-      console.log(objetSauce);
-      console.log(req.auth.userId);
-      if (objetSauce.userId != req.auth.userId) {
-        res
-          .status(401)
-          .json({ message: "NON AUTORISE! Sur route PUT modifySauce" });
+    .then((sauceTrouvee) => {
+      if (sauceTrouvee.userId != req.auth.userId) {
+        res.status(401).json({ message: "NON AUTORISE!" });
       } else {
-        if (!req.file)//l'inverse(!) si il n'ya a pas d'image dans lfichier requête.
-        {
+        if (req.file) {
+          const filename = sauceTrouvee.imageUrl.split("/images/")[1];
+          fs.unlink(`images/${filename}`, () => {
+            sauce
+              .updateOne(
+                { _id: req.params.id },
+                { ...thingObject, _id: req.params.id }
+              )
+              .then(
+                () => res.status(200).json({ message: "Objet modifié!" }),
+                console.log("Sauce modifiée avec l'image")
+              )
+              .catch((error) => res.status(401).json({ error }));
+          });
+        } else {
           sauce
             .updateOne(
               { _id: req.params.id },
-              { ...objetSauce, _id: req.params.id }
+              { ...thingObject, _id: req.params.id }
             )
-            .then(() => res.status(200).json({ message: "Objet modifié!" }))
-            .catch((error) => res.status(401).json({ error }));
-
-
-      } else{
-        const filename = theSauce.imageUrl.split("/images/")[1];
-        console.log(filename);
-
-
-        fs.unlink(`images/${filename}`, () => {
-          sauce
-            .updateOne(
-              { _id: req.params.id },
-              { ...objetSauce, _id: req.params.id }
+            .then(
+              () => res.status(200).json({ message: "Objet modifié!" }),
+              console.log("Sauce modifiée sans image")
             )
-            .then(() => res.status(200).json({ message: "Objet modifié!" }))
             .catch((error) => res.status(401).json({ error }));
-        });
-      }}
+        }
+      }
     })
     .catch((error) => {
       res.status(400).json({ error });

@@ -11,15 +11,16 @@ const path = require("path");
 const userRoutes = require("./routes/user");
 const sauceRoutes = require("./routes/sauces");
 
+require ("dotenv").config();
 //Ajout de la passerelle de connexion mangoose pour le controle de la BD Mongo.
 mongoose
-  .connect("mongodb+srv://fabiencdp:Fab40@piquante.kgej83c.mongodb.net/test", {
+  .connect(process.env.URL_MONGODB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
-
+console.log(process.env.URL_MONGODB);
 //set header pour les cors
 app.use(cors());
 
