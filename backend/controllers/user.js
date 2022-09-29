@@ -10,7 +10,7 @@ exports.signup = (req, res, next) => {
   console.log(req.body.password);
 
   const cryptoEmail = crypto
-    .HmacSHA256(req.body.email, "process.env.EMAIL_ENV")
+    .HmacSHA256(req.body.email, process.env.EMAIL_ENV)
     .toString();
   console.log(cryptoEmail);
   bcrypt
@@ -32,7 +32,7 @@ exports.signup = (req, res, next) => {
 
 exports.login = (req, res, next) => {
   const cryptoEmail = crypto
-    .HmacSHA256(req.body.email, "process.env.EMAIL_ENV")
+    .HmacSHA256(req.body.email, process.env.EMAIL_ENV)
     .toString();
   console.log(cryptoEmail);
 

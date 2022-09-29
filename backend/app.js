@@ -10,8 +10,10 @@ const path = require("path");
 //import des routes auth et sauces
 const userRoutes = require("./routes/user");
 const sauceRoutes = require("./routes/sauces");
-
+//importation des fonctionnalités de dotenv
 require ("dotenv").config();
+
+
 //Ajout de la passerelle de connexion mangoose pour le controle de la BD Mongo.
 mongoose
   .connect(process.env.URL_MONGODB, {
