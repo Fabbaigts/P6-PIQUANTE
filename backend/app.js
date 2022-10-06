@@ -11,19 +11,19 @@ const path = require("path");
 const userRoutes = require("./routes/user");
 const sauceRoutes = require("./routes/sauces");
 //importation des fonctionnalités de dotenv
-require ("dotenv").config();
-
+require("dotenv").config();
 
 //Ajout de la passerelle de connexion mangoose pour le controle de la BD Mongo.
 mongoose
   .connect(process.env.URL_MONGODB, {
+    //Variable d'environnement cachant ainsi les informations de connexion à la BD
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
-console.log(process.env.URL_MONGODB);
-//set header pour les cors
+
+//set header pour les cors (cross origin ressource sharing  )
 app.use(cors());
 
 //fonction express  permettant le parsage du body
@@ -35,7 +35,5 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 //fonction d'express pour la gestion des routes
 app.use("/api/auth", userRoutes);
 app.use("/api/sauces", sauceRoutes);
-
-
 
 module.exports = app;

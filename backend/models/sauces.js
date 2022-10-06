@@ -1,5 +1,6 @@
+// intégration des fonctionnalités de mongoose dans la variable "mongoose"
 const mongoose = require("mongoose");
-
+// Déclaration du modèle mongoose de sauce dans la variable "sauceSchema"
 const sauceSchema = mongoose.Schema({
   userId: { type: String, required: true },
   name: { type: String, required: true },
@@ -13,10 +14,5 @@ const sauceSchema = mongoose.Schema({
   usersLiked: [{ type: String, default: [] }],
   usersDisliked: [{ type: String, default: [] }],
 });
+// exportation du modèle mongoose "sauceShema" pour une portée globale dans les fichiers  dossier backend
 module.exports = mongoose.model("Sauce", sauceSchema);
-
-/*usersLiked: [{ type: String, default: [] }],
-  usersDisliked: [{ type: String, default: [] }],
-  usersLiked: { type: [String]},
-  usersDisliked: { type: [String]},
-*/
