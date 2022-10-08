@@ -67,6 +67,7 @@ exports.modifySauce = (req, res, next) => {
       }
     : //Si non on récupère simplement le corps de la requête et on retire l'userId
       { ...req.body };
+  console.log(thingObject);
   delete thingObject._userId;
 
   // thingObject prend alors une valeur ou l'autre selon que la requête contienne ou pas un file.
@@ -120,7 +121,11 @@ exports.deleteSauce = (req, res, next) => {
         fs.unlink(`images/${filename}`, () => {
           sauce
             .deleteOne({ _id: req.params.id }) //la fonction .deleteOne permet de sypprimer un élément par son Id.
-            .then((sauce) => res.status(200).json())
+            .then((sauce) =>
+              res
+                .status(200)
+                .json({ message: "Sauce effacée de la base de données" })
+            )
             .catch((error) => res.status(404).json({ error }));
         });
       }
@@ -145,9 +150,10 @@ exports.like = (req, res, next) => {
           $push: { usersLiked: req.body.userId }, //$push permet d'insérer une donnée dans un tableau de données.
         }
       )
-      .then(() => res.status(200).json())
+      .then(() => res.status(200).json({ message: "Like ajouté" }))
       .catch((error) => res.status(400).json({ error }));
   }
+
   //*****************  Cas du User qui n'aime pas la sauce  ***********************
   else if (req.body.like === -1) {
     sauce
@@ -158,7 +164,7 @@ exports.like = (req, res, next) => {
           $push: { usersDisliked: req.body.userId },
         }
       )
-      .then(() => res.status(200).json())
+      .then(() => res.status(200).json({ message: "DisLike ajouté" }))
       .catch((error) => res.status(400).json({ error }));
   }
   // ****************   Rectification des likes et dislikes  *******************
@@ -175,7 +181,7 @@ exports.like = (req, res, next) => {
               $pull: { usersLiked: req.body.userId }, //Retrait du UserLiked ($pull)de MONGODB
             })
             .then(() => {
-              res.status(200).json({ message: "Like retiré" });
+              res.status(200).json({ message: "Vote like/dislike retiré" });
             })
             .catch((error) => res.status(400).json({ error }));
         } else if (sauce.usersDisliked.includes(req.body.userId)) {
@@ -193,4 +199,5 @@ exports.like = (req, res, next) => {
       })
       .catch((error) => res.status(400).json({ error }));
   }
+  console.log(req.body);
 };
